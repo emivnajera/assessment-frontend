@@ -93,10 +93,24 @@ body { margin: 0;
   background: #fff;
   outline: none;
   transition: border-color .2s, box-shadow .2s;
+  color: #0f172a;          /* texto oscuro */
+  caret-color: #1d4ed8;    /* cursor azul */
 }
 .input2:focus{
   border-color: var(--blue-200);
   box-shadow: 0 0 0 3px rgba(37, 99, 235, .15);
+}
+
+.input2::placeholder {
+  color: #64748b;          /* placeholder gris */
+  opacity: 1;
+}
+
+.input2:-webkit-autofill,
+.input2:-webkit-autofill:hover,
+.input2:-webkit-autofill:focus {
+  -webkit-text-fill-color: #0f172a;
+  transition: background-color 9999s ease-in-out 0s;
 }
 
 /* Contraseña */

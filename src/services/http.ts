@@ -1,26 +1,38 @@
-import axios, { AxiosError } from "axios";
-
-// Leer baseURL del .env del FRONTEND
-const baseURL = import.meta.env.VITE_API_URL ?? "http://localhost:8000";
+// http.ts
+import axios, { AxiosHeaders } from "axios";
 
 export const http = axios.create({
-  baseURL,
-  withCredentials: true,                // 🔑 cookies (Sanctum)
-  headers: { Accept: "application/json" },
+  baseURL: import.meta.env.VITE_API_URL ?? "http://localhost:8000",
+  withCredentials: true,
+  headers: {
+    Accept: "application/json",
+    "X-Requested-With": "XMLHttpRequest",
+  },
+  xsrfCookieName: "XSRF-TOKEN",
+  xsrfHeaderName: "X-XSRF-TOKEN",
 });
 
-// —— Interceptor de respuesta: normaliza errores ——
-http.interceptors.response.use(
-  (res) => res,
-  (err: AxiosError) => {
-    // Puedes loguear o re-mapear mensajes aquí
-    // Ej: enviar a Sentry, o transformar estructura
-    return Promise.reject(err);
-  }
-);
+function getCookie(name: string) {
+  const m = document.cookie.match(new RegExp("(^|; )" + name + "=([^;]*)"));
+  return m ? decodeURIComponent(m[2]) : null;
+}
 
-// —— Helper para Sanctum CSRF (llamar antes de POST/PUT/PATCH/DELETE) ——
+http.interceptors.request.use((config) => {
+  const token = getCookie("XSRF-TOKEN");
+  if (token) {
+    // Si headers ya es AxiosHeaders, usa .set; si no, crea uno.
+    if (config.headers instanceof AxiosHeaders) {
+      config.headers.set("X-XSRF-TOKEN", token);
+    } else if (config.headers) {
+      // headers objeto plano
+      (config.headers as Record<string, string>)["X-XSRF-TOKEN"] = token;
+    } else {
+      config.headers = new AxiosHeaders({ "X-XSRF-TOKEN": token });
+    }
+  }
+  return config;
+});
+
 export async function ensureCsrf() {
-  // idempotente: si ya existe cookie, Laravel responde 204 igualmente
   await http.get("/sanctum/csrf-cookie");
 }

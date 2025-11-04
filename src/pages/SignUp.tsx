@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import "./signup.css";
+import { register } from "../services/auth.service"; // ajusta la ruta si cambia
+
 
 type SignupProps = {
   onSubmitForm?: (payload: {
@@ -34,25 +36,33 @@ export default function Signup({ onSubmitForm, onGoLogin }: SignupProps) {
     }
 
     try {
-      setLoading(true);
-      if (onSubmitForm) {
-        await onSubmitForm({
-          name,
-          email,
-          password: pw,
-          password_confirmation: pw2,
-        });
-      } else {
-        // Placeholder si aún no conectas el servicio
-        await new Promise((r) => setTimeout(r, 600));
-        console.log("signup", { name, email });
-      }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    } catch (e) {
-      setErr("No se pudo crear la cuenta. Intenta de nuevo.");
-    } finally {
-      setLoading(false);
-    }
+  setLoading(true);
+  if (onSubmitForm) {
+    await onSubmitForm({
+      name,
+      email,
+      password: pw,
+      password_confirmation: pw2,
+    });
+  } else {
+    // ⬇️ llamada real al backend
+    await register({
+      name,
+      email,
+      password: pw,
+      password_confirmation: pw2,
+    });
+  }
+
+  // ⬇️ redirección simple al login
+  window.location.href = "/login";
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+} catch (e) {
+  setErr("No se pudo crear la cuenta. Intenta de nuevo.");
+} finally {
+  setLoading(false);
+}
+
   }
 
   return (

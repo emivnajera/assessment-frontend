@@ -86,11 +86,26 @@ body{
   font-size:14px;
   background:#fff; outline:none;
   transition:border-color .2s, box-shadow .2s;
+  color: #0f172a;  
+  caret-color: #1d4ed8;
 }
 .su-input:focus{
   border-color:var(--blue-200);
   box-shadow:0 0 0 3px rgba(37,99,235,.15);
 }
+
+.su-input::placeholder {
+  color: #64748b;
+  opacity: 1;
+}
+
+.su-input:-webkit-autofill,
+.su-input:-webkit-autofill:hover,
+.su-input:-webkit-autofill:focus {
+  -webkit-text-fill-color: #0f172a;
+  transition: background-color 9999s ease-in-out 0s;
+}
+
 
 /* password + toggle */
 .su-pw{ position:relative; }
