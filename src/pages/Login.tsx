@@ -1,146 +1,97 @@
 import React, { useState } from "react";
-import "./Login.css";
+import "./login.css";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [show, setShow] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
-
     if (!email || !password) {
-      setError("Por favor, completa tu correo y contraseña.");
+      setError("Completa correo y contraseña.");
       return;
     }
-
     try {
-      setIsLoading(true);
-      // TODO: Reemplaza por tu llamada de autenticación
-      await new Promise((r) => setTimeout(r, 900));
+      setLoading(true);
+      // TODO: reemplaza por tu llamada real a la API
+      await new Promise((r) => setTimeout(r, 700));
       console.log({ email, password });
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    } catch (err) {
+    } catch {
       setError("No se pudo iniciar sesión. Intenta de nuevo.");
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   }
 
   return (
-    <div className="login-page">
-      {/* Decoración de fondo */}
-      <div className="bg-grid" aria-hidden />
+    <div className="lp2">
+      {/* decoraciones */}
+      <div className="blob blob-a" aria-hidden />
+      <div className="blob blob-b" aria-hidden />
+      <div className="grid-overlay" aria-hidden />
 
-      <div className="login-container">
-        {/* Columna izquierda (branding) solo en pantallas grandes */}
-        <aside className="login-aside">
-          <div className="pill">Bienvenido de vuelta</div>
-          <h1 className="title">
-            Inicia sesión
-            <span className="subtitle">y continúa donde te quedaste.</span>
-          </h1>
-
-          <div className="aside-cards">
-            {[1, 2, 3, 4].map((i) => (
-              <div className="mini-card" key={i}>
-                <div className="mini-card-avatar" />
-                <div className="mini-line w-75" />
-                <div className="mini-line w-50" />
-              </div>
-            ))}
+      <main className="card2" role="main" aria-labelledby="login-title">
+        <header className="head">
+          <div className="brand">
+            <div className="logo">L</div>
+            <div className="brand-text">
+              <h1 id="login-title" className="title">Iniciar sesión</h1>
+              <p className="sub">Bienvenido de vuelta</p>
+            </div>
           </div>
-        </aside>
+        </header>
 
-        {/* Columna derecha (formulario) */}
-        <main className="login-main">
-          <div className="card">
-            <header className="card-header">
-              <div className="logo">L</div>
-              <div className="header-text">
-                <h2>Panel</h2>
-                <p>Accede con tu cuenta</p>
-              </div>
-            </header>
+        {error && <div className="alert2">{error}</div>}
 
-            {error && <div className="alert">{error}</div>}
+        <form className="form2" onSubmit={onSubmit}>
+          <label className="label2" htmlFor="email">Correo</label>
+          <input
+            id="email"
+            type="email"
+            className="input2"
+            placeholder="tu@correo.com"
+            autoComplete="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
 
-            <form onSubmit={onSubmit} className="form">
-              <div className="field">
-                <label htmlFor="email">Correo</label>
-                <input
-                  id="email"
-                  type="email"
-                  autoComplete="email"
-                  placeholder="tu@correo.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                />
-              </div>
-
-              <div className="field">
-                <div className="field-row">
-                  <label htmlFor="password">Contraseña</label>
-                  <button
-                    type="button"
-                    className="link"
-                    onClick={() => setShowPassword((s) => !s)}
-                    aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
-                  >
-                    {showPassword ? "Ocultar" : "Mostrar"}
-                  </button>
-                </div>
-                <div className="password-wrap">
-                  <input
-                    id="password"
-                    type={showPassword ? "text" : "password"}
-                    autoComplete="current-password"
-                    placeholder="••••••••"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                  />
-                  <span className="input-icon" aria-hidden>
-                    ⓘ
-                  </span>
-                </div>
-              </div>
-
-              <div className="actions-row">
-                <label className="remember">
-                  <input type="checkbox" />
-                  <span>Recuérdame</span>
-                </label>
-                <a href="#" className="link">
-                  ¿Olvidaste tu contraseña?
-                </a>
-              </div>
-
-              <button className="btn-primary" type="submit" disabled={isLoading}>
-                {isLoading ? "Ingresando…" : "Ingresar"}
-                <span className="arrow">➜</span>
-              </button>
-            </form>
-
-            <div className="divider">
-              <span>o</span>
-            </div>
-
-            <div className="secondary-actions">
-              <button className="btn-ghost">Continuar con correo mágico</button>
-              <button className="btn-ghost">Crear cuenta</button>
-            </div>
-
-            <p className="footnote">Protección activada — sesiones seguras y cifradas.</p>
+          <label className="label2" htmlFor="password">Contraseña</label>
+          <div className="pwd-wrap">
+            <input
+              id="password"
+              type={show ? "text" : "password"}
+              className="input2"
+              placeholder="••••••••"
+              autoComplete="current-password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+            <button
+              type="button"
+              className="toggle2"
+              onClick={() => setShow((s) => !s)}
+              aria-label={show ? "Ocultar contraseña" : "Mostrar contraseña"}
+            >
+              {show ? "Ocultar" : "Mostrar"}
+            </button>
           </div>
 
-          <p className="mobile-signup">
-            ¿Nuevo por aquí? <a className="link" href="#">Crea una cuenta</a>
-          </p>
-        </main>
-      </div>
+          <button className="btn2" type="submit" disabled={loading}>
+            {loading ? "Ingresando…" : "Ingresar"}
+          </button>
+        </form>
+
+      <footer className="foot2">
+        <p className="signup">
+          ¿No tienes cuenta?{" "}
+          <a className="link2" href="/signup">Crear cuenta</a>
+        </p>
+      </footer>
+      </main>
     </div>
   );
 }
