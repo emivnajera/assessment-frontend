@@ -1,14 +1,18 @@
 import React, { useState } from "react";
-import "./login.css";
+import "./Login.css";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { login as loginService } from "../services/auth.service"; // ajusta la ruta si cambia
 
 export default function Login() {
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [show, setShow] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  async function onSubmit(e: React.FormEvent) {
+   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
     if (!email || !password) {
@@ -17,11 +21,20 @@ export default function Login() {
     }
     try {
       setLoading(true);
-      // TODO: reemplaza por tu llamada real a la API
-      await new Promise((r) => setTimeout(r, 700));
-      console.log({ email, password });
-    } catch {
-      setError("No se pudo iniciar sesión. Intenta de nuevo.");
+      // ⬇️ Llama a Breeze (hace ensureCsrf + POST /login + GET /api/user)
+      await loginService(email, password);
+      // ⬇️ Éxito: ve al Home
+      navigate("/home", { replace: true });
+    } catch (err) {
+      // mensajes amigables
+      if (axios.isAxiosError(err)) {
+        const s = err.response?.status ?? 0;
+        if (s === 401) setError("Credenciales inválidas.");
+        else if (s === 422) setError("Validación: revisa los campos.");
+        else setError("Error del servidor. Intenta más tarde.");
+      } else {
+        setError("Ocurrió un error inesperado.");
+      }
     } finally {
       setLoading(false);
     }
